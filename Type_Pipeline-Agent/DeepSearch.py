@@ -3,6 +3,8 @@ from langgraph.graph import StateGraph, START, END
 from agents.TaskAgent import planner_chain, WebSearchPlan
 from agents.SearchAgent import search_agent
 from agents.WritterAgent import writer_chain, ReportData, ReportSection
+# 这是一个为分层搜索和报告生成工作流，通过定义状态、节点和状态图来实现工作流，实际开发中需要进行分层架构，将不同功能模块化
+# 该项目已经实现模块化，程序的主入口在main.py
 # 1. 定义状态 (State)：用于在各个节点之间传递数据
 class ResearchState(TypedDict):
     query: str

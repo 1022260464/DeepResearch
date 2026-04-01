@@ -9,9 +9,11 @@ from .BaseDeepSeekModel import model
 WRITER_PROMPT = (
     "You are an expert technical writer and research synthesizer. "
     "Your task is to write a comprehensive, well-structured report based on the provided query and research context. "
-    "Ensure the tone is objective, professional, and directly answers the user's query. "
-    "Use the provided context to back up your claims. Do not make up facts. "
-    "If the context is insufficient, acknowledge the limitations."
+    # 新增严厉的防缝合指令：
+    "CRITICAL RULE: You must strictly distinguish between 'Internal Company Data' and 'Public Market Data'. "
+    "NEVER attribute public achievements, external case studies, or competitors' deployment numbers to our company's specific product. "
+    "Only use facts explicitly stated about our product for our product. "
+    "Use the provided context to back up your claims. Do not make up facts."
 )
 
 # 构建 Prompt 模板
@@ -44,25 +46,22 @@ class ReportData(BaseModel):
 # 4. 构建写作 Chain
 writer_chain = writer_prompt | model.with_structured_output(ReportData)
 
-# 5. 测试运行
-if __name__ == "__main__":
-    # 模拟用户的原始问题
-    test_query = "请问你对AI+教育有何看法"
-
-    # 模拟前面 Search Agent 收集回来的网页总结内容 (在真实的 Pipeline 中，这应该是一个变量)
-    mock_context = """
-    1. AI可以提供个性化学习体验，通过分析学生的学习进度自动调整题目难度（来源：教育科技前沿）。
-    2. 教师可以使用AI自动批改作业和生成教案，从而减轻重复性工作负担，将更多精力放在师生互动上（来源：AI时代周刊）。
-    3. 目前AI+教育面临数据隐私挑战，且过度依赖AI可能削弱学生的独立思考能力。此外，偏远地区缺乏设备导致数字鸿沟扩大（来源：全球教育报告2025）。
+# ==========================================
+# 5. 核心改造：将执行逻辑和打印封装成函数
+# ==========================================
+def write_report(query: str, context: str) -> ReportData:
     """
-
-    print("正在根据搜索资料合成最终报告...\n")
+    接收来自外层的 query 和 context，调用写作 Agent，并打印执行过程
+    """
+    print(f"\n[WritterAgent] ✍️ 正在根据搜索资料合成报告...")
+    print(f"[WritterAgent] 用户问题：'{query}'")
+    print(f"[WritterAgent] 上下文长度：{len(context)} 字符\n")
 
     try:
-        # 执行 Chain，传入 query 和 context
+        # 执行 Chain
         final_report = writer_chain.invoke({
-            "query": test_query,
-            "context": mock_context
+            "query": query,
+            "context": context
         })
 
         # 格式化并打印结构化报告
@@ -76,5 +75,18 @@ if __name__ == "__main__":
         for ref in final_report.references:
             print(f"- {ref}")
 
+        return final_report
+
     except Exception as e:
-        print(f"运行出错: {e}")
+        print(f"[WritterAgent] ❌ 运行出错：{e}")
+        raise e
+
+# 如果你想单独测试这个文件，可以保留下面的 main 判断
+if __name__ == "__main__":
+    test_query = "请问你对AI+教育有何看法"
+    mock_context = """
+    1. AI可以提供个性化学习体验，通过分析学生的学习进度自动调整题目难度（来源：教育科技前沿）。
+    2. 教师可以使用AI自动批改作业和生成教案，从而减轻重复性工作负担，将更多精力放在师生互动上（来源：AI时代周刊）。
+    3. 目前AI+教育面临数据隐私挑战，且过度依赖AI可能削弱学生的独立思考能力。此外，偏远地区缺乏设备导致数字鸿沟扩大（来源：全球教育报告2025）。
+    """
+    write_report(test_query, mock_context)
