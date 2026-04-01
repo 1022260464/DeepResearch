@@ -1,4 +1,8 @@
 # tools/rag_tool.py
+import os
+# 强制设定 Hugging Face 的下载源为国内镜像站
+os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
+
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.tools import  tool
