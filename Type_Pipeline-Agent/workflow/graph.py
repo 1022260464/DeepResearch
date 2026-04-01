@@ -12,8 +12,10 @@ from agents.SearchAgent import perform_search_async  # 导入异步搜索函数
 from schema.state import ResearchState
 
 # 创建支持自定义类型的序列化器，消除 msgpack 反序列化警告
-# allowed_msgpack_modules 使用 True 允许所有模块，或传入具体类型列表
-serde = JsonPlusSerializer(allowed_msgpack_modules=True)
+# 精确配置白名单，将 WebSearchPlan 加入允许列表
+serde = JsonPlusSerializer(
+    allowed_msgpack_modules=[('agents.TaskAgent', 'WebSearchPlan')]
+)
 
 # ==========================================
 # 1. 定义节点函数 (Nodes)
