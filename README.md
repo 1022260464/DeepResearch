@@ -78,13 +78,11 @@ DeepResearch/Type_Pipeline-Agent/
 
 # 最终结果展示：
 
-![](C:\Users\冯宏涛\Desktop\PixPin_2026-04-02_13-35-20.png)
+![PixPin_2026-04-02_13-35-20](README.assets/PixPin_2026-04-02_13-35-20.png)
+
+![PixPin_2026-04-02_13-36-56](README.assets/PixPin_2026-04-02_13-36-56.png)
 
 
-
-![PixPin_2026-04-02_13-36-56](C:\Users\冯宏涛\Desktop\PixPin_2026-04-02_13-36-56.png)
-
-![](C:\Users\冯宏涛\Desktop\PixPin_2026-04-02_13-38-25.png)
 
 # 示例生成结果展示：
 
